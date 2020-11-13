@@ -1,0 +1,272 @@
+Imports System.Drawing.Printing
+Imports System.IO
+
+Public Class Form2
+    Public Shared menu1, menunasi, menurendang, menusayur, tpa As String
+    Public Shared totnasi, totrendang, totsayur, totalall, jmlpnasi, jmlpren, jmlpsay As Integer
+
+    Private Sub txtupel_TextChanged(sender As Object, e As EventArgs) Handles txtupel.TextChanged
+        Dim cekuang, cekkembali As Integer
+        If (txtupel.Text = "") Then
+            cekuang = 0
+            cekkembali = -1
+        Else
+            cekuang = txtupel.Text
+            cekkembali = cekuang - totalall
+        End If
+        lblkembali.Text = cekkembali.ToString
+        If (cekkembali < 0) Then
+            btncetak.Enabled = False
+        Else
+            btncetak.Enabled = True
+        End If
+
+    End Sub
+
+    Private Sub Form2_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.CenterToScreen()
+        menu1 = ""
+        lblnasi.Text = "Belum Ada Pesanan"
+        lblrendang.Text = "Belum Ada Pesanan"
+        lblsayur.Text = "Belum Ada Pesanan"
+        txtnasi.Enabled = False
+        txtrendang.Enabled = False
+        txtsayur.Enabled = False
+        totnasi = 0
+        totrendang = 0
+        totsayur = 0
+        txttotalpesanan.Enabled = False
+        btnpesan.Enabled = False
+        txtupel.Text = ""
+        txtupel.Enabled = False
+        btncetak.Enabled = False
+    End Sub
+
+    Private Sub txtrendang_TextChanged(sender As Object, e As EventArgs) Handles txtrendang.TextChanged
+        txttotalpesanan.Text = ""
+        Dim jmlrendang, totalrendang As Integer
+        If (txtrendang.Text <> "") Then
+            jmlrendang = txtrendang.Text
+        Else
+            jmlrendang = 0
+        End If
+        jmlpren = jmlrendang
+        totalrendang = 6000 * jmlrendang
+        lbltotren.Text = totalrendang
+        totrendang = totalrendang
+        totalall = totnasi + totrendang + totsayur
+        lbltotharga.Text = totalall
+        If (lbltotharga.Text = "0") Then
+            btnpesan.Enabled = False
+        Else
+            btnpesan.Enabled = True
+        End If
+    End Sub
+
+    Private Sub PrintDoc1_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles PrintDoc1.PrintPage
+        e.Graphics.DrawString(txttotalpesanan.Text, txttotalpesanan.Font, Brushes.Black, 100, 100)
+    End Sub
+
+    Private Sub txtsayur_TextChanged(sender As Object, e As EventArgs) Handles txtsayur.TextChanged
+        txttotalpesanan.Text = ""
+        Dim jmlsayur, totalsayur As Integer
+        If (txtsayur.Text <> "") Then
+            jmlsayur = txtsayur.Text
+
+        Else
+            jmlsayur = 0
+        End If
+        jmlpsay = jmlsayur
+        totalsayur = 2000 * jmlsayur
+        lbltotsay.Text = totalsayur
+        totsayur = totalsayur
+        totalall = totnasi + totrendang + totsayur
+        lbltotharga.Text = totalall
+        If (lbltotharga.Text = "0") Then
+            btnpesan.Enabled = False
+        Else
+            btnpesan.Enabled = True
+        End If
+    End Sub
+
+    Private Sub cb1_CheckedChanged(sender As Object, e As EventArgs) Handles cb1.CheckedChanged
+        If (cb1.Checked = True) Then
+            menunasi = "Nasi, @=Rp.3.000"
+            txtnasi.Enabled = True
+            lblnasi.Text = menunasi
+            txtnasi.Focus()
+        Else
+            menunasi = "Belum Ada Pesanan"
+            txtnasi.Enabled = False
+            lblnasi.Text = menunasi
+            txtnasi.Text = ""
+            lbltotnasi.Text = 0
+            totnasi = 0
+        End If
+        txttotalpesanan.Text = ""
+        tpa = ""
+        txtupel.Enabled = False
+        txtupel.Text = ""
+        lblkembali.Text = "0"
+    End Sub
+
+
+    Private Sub txtnasi_TextChanged(sender As Object, e As EventArgs) Handles txtnasi.TextChanged
+        txttotalpesanan.Text = ""
+        Dim jmlnasi, totalnasi As Integer
+        If (txtnasi.Text <> "") Then
+            jmlnasi = txtnasi.Text
+
+        Else
+            jmlnasi = 0
+        End If
+        jmlpnasi = jmlnasi
+        totalnasi = 3000 * jmlnasi
+        lbltotnasi.Text = totalnasi
+        totnasi = totalnasi
+        totalall = totnasi + totrendang + totsayur
+        lbltotharga.Text = totalall
+        If (lbltotharga.Text = "0") Then
+            btnpesan.Enabled = False
+        Else
+            btnpesan.Enabled = True
+        End If
+
+
+
+
+    End Sub
+
+    Private Sub btncetak_Click(sender As Object, e As EventArgs) Handles btncetak.Click
+        PrintDoc1.Print()
+    End Sub
+    Public Sub SimpanData(tpa As String)
+        Dim strFile As String = "E:\ErrorLog_" & DateTime.Today.ToString("dd-MMM-yyyy") & ".txt"
+        Dim sw As StreamWriter
+        Try
+            If (Not File.Exists(strFile)) Then
+                sw = File.CreateText(strFile)
+                sw.WriteLine(tpa)
+            Else
+                sw = File.AppendText(strFile)
+                sw.WriteLine(tpa)
+            End If
+            sw.WriteLine("Error Message in  Occured at-- " & DateTime.Now)
+            sw.Close()
+        Catch ex As IOException
+            MsgBox("Error writing to log file.")
+        End Try
+    End Sub
+    Private Sub txttotalpesanan_TextChanged(sender As Object, e As EventArgs) Handles txttotalpesanan.TextChanged
+
+    End Sub
+
+    Private Sub cb2_CheckedChanged(sender As Object, e As EventArgs) Handles cb2.CheckedChanged
+        If (cb2.Checked = True) Then
+            menurendang = "Rendang, @=Rp.6.000"
+            txtrendang.Enabled = True
+            lblrendang.Text = menurendang
+            txtrendang.Focus()
+        Else
+            menurendang = "Belum Ada Pesanan"
+            txtrendang.Enabled = False
+            lblrendang.Text = menurendang
+            txtrendang.Text = ""
+            lbltotren.Text = 0
+            totrendang = 0
+        End If
+        txttotalpesanan.Text = ""
+        tpa = ""
+        txtupel.Enabled = False
+        txtupel.Text = ""
+        lblkembali.Text = "0"
+    End Sub
+
+    Private Sub cb3_CheckedChanged(sender As Object, e As EventArgs) Handles cb3.CheckedChanged
+        If (cb3.Checked = True) Then
+            menusayur = "Sayur, @=Rp.2.000"
+            txtsayur.Enabled = True
+            lblsayur.Text = menusayur
+            txtsayur.Focus()
+        Else
+            menusayur = "Belum Ada Pesanan"
+            txtsayur.Enabled = False
+            lblsayur.Text = menusayur
+            txtsayur.Text = ""
+            lbltotsay.Text = 0
+            totsayur = 0
+        End If
+        txttotalpesanan.Text = ""
+        tpa = ""
+        txtupel.Enabled = False
+        txtupel.Text = ""
+        lblkembali.Text = "0"
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnpesan.Click
+        tpa = ""
+        tpa = tpa + "------------------Menu Pesanan------------------" + vbNewLine + vbNewLine
+
+        If (jmlpnasi <> 0) Then
+            tpa = tpa + menunasi + ": " + vbNewLine
+            tpa = tpa + "---Jumlah:" + jmlpnasi.ToString + vbNewLine
+            tpa = tpa + "-----------------------------------Harga: Rp." + totnasi.ToString + vbNewLine
+            tpa = tpa + vbNewLine
+        End If
+        If (jmlpren <> 0) Then
+            tpa = tpa + menurendang + ": " + vbNewLine
+            tpa = tpa + "---Jumlah:" + jmlpren.ToString + vbNewLine
+            tpa = tpa + "-----------------------------------Harga: Rp." + totrendang.ToString + vbNewLine
+            tpa = tpa + vbNewLine
+        End If
+        If (jmlpsay <> 0) Then
+            tpa = tpa + menusayur + ": " + vbNewLine
+            tpa = tpa + "---Jumlah:" + jmlpsay.ToString + vbNewLine
+            tpa = tpa + "-----------------------------------Harga: Rp." + totsayur.ToString + vbNewLine
+            tpa = tpa + vbNewLine
+        End If
+        tpa = tpa + "---------------------------Total Harga: " + "Rp. " + totalall.ToString + ",-" + vbNewLine + vbNewLine
+        tpa = tpa + "------Terima Kasih atas Kunjungan Anda-----" + vbNewLine
+        txttotalpesanan.Text = tpa
+        txtupel.Enabled = True
+        txtupel.Text = ""
+        txtupel.Focus()
+    End Sub
+
+    Private Sub txtnasi_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtnasi.KeyPress
+        If Not IsNumeric(e.KeyChar) And Not e.KeyChar = ChrW(Keys.Back) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtupel_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtupel.KeyPress
+        If Not IsNumeric(e.KeyChar) And Not e.KeyChar = ChrW(Keys.Back) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtrendang_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtrendang.KeyPress
+        If Not IsNumeric(e.KeyChar) And Not e.KeyChar = ChrW(Keys.Back) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtsayur_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtsayur.KeyPress
+        If Not IsNumeric(e.KeyChar) And Not e.KeyChar = ChrW(Keys.Back) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub PrintDoc1_BeginPrint(sender As Object, e As PrintEventArgs) Handles PrintDoc1.BeginPrint
+        MsgBox("Mulai Cetak")
+    End Sub
+
+    Private Sub PrintDoc1_EndPrint(sender As Object, e As PrintEventArgs) Handles PrintDoc1.EndPrint
+        MsgBox("Selesai Cetak")
+        Call SimpanData(tpa)
+    End Sub
+
+    Private Sub PrintDoc1_QueryPageSettings(sender As Object, e As QueryPageSettingsEventArgs) Handles PrintDoc1.QueryPageSettings
+        MsgBox("Mulai Cetak Query")
+    End Sub
+End Class
